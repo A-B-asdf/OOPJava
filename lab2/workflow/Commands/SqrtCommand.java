@@ -4,12 +4,12 @@ import workflow.ExecutionContext;
 import workflow.exeption.*;
 
 public class SqrtCommand implements Command {
-    public void execute(ExecutionContext context, String... params) throws EmptyStackException, InvalidParameterException, MathException {
+    public void execute(ExecutionContext context, String... params) throws NotEnoughOperandsException, InvalidParameterException, MathException {
         if (params.length != 0) {
             throw new InvalidParameterException("Sqrt command doesn't require any parameters");
         }
         if (context.getStack().isEmpty()) {
-            throw new EmptyStackException();
+            throw new NotEnoughOperandsException();
         }
         if (context.getStack().peek() < 0) {
             throw new MathException("Cannot take square root of a negative number");

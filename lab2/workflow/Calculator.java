@@ -36,6 +36,10 @@ public class Calculator {
         scanner.close();
     }
 
+    public ExecutionContext getContext() {
+        return this.context;
+    }
+
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
         calculator.run();

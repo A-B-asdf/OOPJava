@@ -4,12 +4,12 @@ import workflow.ExecutionContext;
 import workflow.exeption.*;
 
 public class MultiplyCommand implements Command {
-    public void execute(ExecutionContext context, String... params) throws EmptyStackException, InvalidParameterException {
+    public void execute(ExecutionContext context, String... params) throws NotEnoughOperandsException, InvalidParameterException {
         if (params.length != 0) {
             throw new InvalidParameterException("Multiply command doesn't require any parameters");
         }
         if (context.getStack().size() < 2) {
-            throw new EmptyStackException();
+            throw new NotEnoughOperandsException();
         }
         Double b = context.getStack().pop();
         Double a = context.getStack().pop();
