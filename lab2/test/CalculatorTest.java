@@ -38,7 +38,7 @@ public class CalculatorTest {
         // Test popping a value from the stack
         command.execute(context);
         assertEquals(0, context.getStack().size());
-        assertEquals(5.0, context.getNamedParameters().get("_"));
+        assertEquals(5.0, command.getResult());
 
         // Test popping from an empty stack
         assertThrows(EmptyStackException.class, () -> command.execute(context));
@@ -79,7 +79,7 @@ public class CalculatorTest {
     }
 
     @Test
-    public void testMultiplyCommand() throws EmptyStackException, InvalidParameterException {
+    public void testMultiplyCommand() throws NotEnoughOperandsException, InvalidParameterException {
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(5.0);
         context.getStack().push(7.0);
@@ -92,11 +92,12 @@ public class CalculatorTest {
 
         // Test multiplying with not enough operands
         context.getStack().clear();
-        assertThrows(EmptyStackException.class, () -> command.execute(context));
+        assertThrows(NotEnoughOperandsException.class, () -> command.execute(context));
     }
 
     @Test
-    // Test whether the PopCommand removes the top value from the stack when the stack is non-empty.
+    // Test whether the PopCommand removes the top value from the stack when the
+    // stack is non-empty.
     public void testPopCommandNonEmptyStack() throws Exception {
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(3.0);
@@ -106,7 +107,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the AddCommand throws an exception when there are not enough operands on the stack.
+    // Test whether the AddCommand throws an exception when there are not enough
+    // operands on the stack.
     public void testAddCommandNotEnoughOperands() {
         ExecutionContext context = new ExecutionContext();
         AddCommand addCommand = new AddCommand();
@@ -114,7 +116,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the AddCommand throws an exception when there is only one operand on the stack.
+    // Test whether the AddCommand throws an exception when there is only one
+    // operand on the stack.
     public void testAddCommandSingleOperand() throws Exception {
         ExecutionContext context = new ExecutionContext();
         PushCommand pushCommand = new PushCommand();
@@ -125,7 +128,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the AddCommand adds the top two numeric operands on the stack and pushes the result to the stack.
+    // Test whether the AddCommand adds the top two numeric operands on the stack
+    // and pushes the result to the stack.
     public void testAddCommandNumericOperands() throws Exception {
         ExecutionContext context = new ExecutionContext();
         PushCommand pushCommand = new PushCommand();
@@ -141,7 +145,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the AddCommand adds the top two named parameter operands on the stack and pushes the result to the stack.
+    // Test whether the AddCommand adds the top two named parameter operands on the
+    // stack and pushes the result to the stack.
     public void testAddCommandNamedParameterOperands() throws Exception {
         ExecutionContext context = new ExecutionContext();
         DefineCommand defineCommand = new DefineCommand();
@@ -161,58 +166,64 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the SubtractCommand throws an exception when there are not enough operands on the stack.
+    // Test whether the SubtractCommand throws an exception when there are not
+    // enough operands on the stack.
     public void testSubtractCommandNotEnoughOperands() {
         // Create a new calculator and get its execution context
         Calculator calculator = new Calculator();
         ExecutionContext context = calculator.getContext();
-        
+
         // Create a new SubtractCommand and add only one operand to the stack
         SubtractCommand command = new SubtractCommand();
         context.getStack().push(5.0);
-        
-        // Verify that a NotEnoughOperandsException is thrown when the command is executed
+
+        // Verify that a NotEnoughOperandsException is thrown when the command is
+        // executed
         assertThrows(NotEnoughOperandsException.class, () -> {
             command.execute(context);
         });
     }
-    
+
     @Test
-    // Test whether the SubtractCommand throws an exception when there is only one operand on the stack.
+    // Test whether the SubtractCommand throws an exception when there is only one
+    // operand on the stack.
     public void testSubtractCommandSingleOperand() {
         // Create a new calculator and get its execution context
         Calculator calculator = new Calculator();
         ExecutionContext context = calculator.getContext();
-        
+
         // Create a new SubtractCommand and add only one operand to the stack
         SubtractCommand command = new SubtractCommand();
         context.getStack().push(5.0);
-        
-        // Verify that a NotEnoughOperandsException is thrown when the command is executed
+
+        // Verify that a NotEnoughOperandsException is thrown when the command is
+        // executed
         assertThrows(NotEnoughOperandsException.class, () -> {
             command.execute(context);
         });
     }
-    
+
     @Test
-    // Test whether the SubtractCommand subtracts the top two numeric operands on the stack and pushes the result to the stack.
+    // Test whether the SubtractCommand subtracts the top two numeric operands on
+    // the stack and pushes the result to the stack.
     public void testSubtractCommandNumericOperands() throws Exception {
         // Create a new calculator and get its execution context
         Calculator calculator = new Calculator();
         ExecutionContext context = calculator.getContext();
-        
+
         // Create a new SubtractCommand and add two numeric operands to the stack
         SubtractCommand command = new SubtractCommand();
         context.getStack().push(5.0);
         context.getStack().push(3.0);
-        
+
         // Execute the command and verify that the result is as expected
         command.execute(context);
         assertEquals(2.0, context.getStack().peek(), 0.0001);
     }
-    
+
     @Test
-    // Test whether the SubtractCommand subtracts the top two named parameter operands on the stack and pushes the result to the stack.
+    // Test whether the SubtractCommand subtracts the top two named parameter
+    // operands on the stack and pushes the result to the stack.
     void testSubtractCommandNamedParameterOperands() throws Exception {
         // Create an execution context and add some named parameters
         ExecutionContext context = new ExecutionContext();
@@ -231,26 +242,29 @@ public class CalculatorTest {
         // Verify that the result is correct
         assertEquals(2.0, context.getStack().pop());
     }
-    
+
     @Test
-    // Test whether the MultiplyCommand throws an exception when there are not enough operands on the stack.
+    // Test whether the MultiplyCommand throws an exception when there are not
+    // enough operands on the stack.
     public void testMultiplyCommandNotEnoughOperands() {
         // Create a new calculator and get its execution context
         Calculator calculator = new Calculator();
         ExecutionContext context = calculator.getContext();
-        
+
         // Create a new MultiplyCommand and add only one operand to the stack
         MultiplyCommand command = new MultiplyCommand();
         context.getStack().push(5.0);
-        
-        // Verify that a NotEnoughOperandsException is thrown when the command is executed
+
+        // Verify that a NotEnoughOperandsException is thrown when the command is
+        // executed
         assertThrows(NotEnoughOperandsException.class, () -> {
             command.execute(context);
         });
     }
 
     @Test
-    // Test whether the DivideCommand throws an exception when there are not enough operands on the stack.
+    // Test whether the DivideCommand throws an exception when there are not enough
+    // operands on the stack.
     public void testDivideCommandNotEnoughOperands() {
         ExecutionContext context = new ExecutionContext();
         DivideCommand command = new DivideCommand();
@@ -268,7 +282,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the DivideCommand divides the top two numeric operands on the stack and pushes the result to the stack.
+    // Test whether the DivideCommand divides the top two numeric operands on the
+    // stack and pushes the result to the stack.
     public void testDivideCommandNumericOperands() throws Exception {
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(10.0);
@@ -279,7 +294,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the SqrtCommand throws an exception when there are not enough operands on the stack.
+    // Test whether the SqrtCommand throws an exception when there are not enough
+    // operands on the stack.
     public void testSqrtCommandNotEnoughOperands() {
         ExecutionContext context = new ExecutionContext();
         SqrtCommand command = new SqrtCommand();
@@ -287,7 +303,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the SqrtCommand throws an exception when the operand is negative.
+    // Test whether the SqrtCommand throws an exception when the operand is
+    // negative.
     public void testSqrtCommandNegativeOperand() {
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(-1.0);
@@ -296,7 +313,8 @@ public class CalculatorTest {
     }
 
     @Test
-    // Test whether the SqrtCommand computes the square root of the top operand on the stack and pushes the result to the stack.
+    // Test whether the SqrtCommand computes the square root of the top operand on
+    // the stack and pushes the result to the stack.
     public void testSqrtCommand() throws Exception {
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(16.0);

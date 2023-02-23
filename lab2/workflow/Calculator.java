@@ -1,6 +1,7 @@
 package workflow;
 
-import workflow.Commands.Command;
+import workflow.Commands.AbstractCommand;
+import workflow.Commands.ResultIngInterface;
 
 import java.io.InputStream;
 import java.util.*;
@@ -31,10 +32,13 @@ public class Calculator {
             String commandName = parts[0];
             String[] params = Arrays.copyOfRange(parts, 1, parts.length);
 
-            Command command = factory.getCommand(commandName);
+            AbstractCommand command = factory.getCommand(commandName);
             try {
                 LOGGER.info("Executing command " + commandName + " with parameters " + Arrays.toString(params));
                 command.execute(context, params);
+                if (command instanceof ResultIngInterface) {
+                    System.out.println(((ResultIngInterface) command).getResult());
+                }
             } catch (workflow.exeption.InvalidParameterException | workflow.exeption.EmptyStackException e) {
                 LOGGER.warning("Error executing command " + commandName + " with parameters " + Arrays.toString(params)
                         + ": " + e.getMessage());

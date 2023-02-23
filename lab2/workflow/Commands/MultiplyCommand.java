@@ -3,8 +3,9 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exeption.*;
 
-public class MultiplyCommand implements Command {
-    public void execute(ExecutionContext context, String... params) throws NotEnoughOperandsException, InvalidParameterException {
+public class MultiplyCommand extends AbstractCommand implements CommandInterface {
+    public void execute(ExecutionContext context, String... params)
+            throws NotEnoughOperandsException, InvalidParameterException {
         if (params.length != 0) {
             throw new InvalidParameterException("Multiply command doesn't require any parameters");
         }
