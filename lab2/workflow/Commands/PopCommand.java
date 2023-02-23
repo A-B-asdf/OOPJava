@@ -1,13 +1,17 @@
 package workflow.Commands;
 
-import java.util.*;
+import workflow.ExecutionContext;
+import workflow.exeption.*;
 
 public class PopCommand implements Command {
-    public void execute(Stack<Double> stack, Map<String, Double> context, String... params) {
-        if (stack.isEmpty()) {
-            throw new IllegalStateException("Stack is empty");
+    public void execute(ExecutionContext context, String... params) throws EmptyStackException, InvalidParameterException {
+        if (params.length != 0) {
+            throw new InvalidParameterException("Pop command doesn't require any parameters");
         }
-        Double result = stack.pop();
-        context.put("_", result);
+        if (context.getStack().isEmpty()) {
+            throw new EmptyStackException();
+        }
+        Double result = context.getStack().pop();
+        context.getNamedParameters().put("_", result);
     }
 }

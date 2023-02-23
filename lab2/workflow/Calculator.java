@@ -5,8 +5,7 @@ import workflow.Commands.Command;
 import java.util.*;
 
 public class Calculator {
-    private Stack<Double> stack = new Stack<>();
-    private Map<String, Double> context = new HashMap<>();
+    private ExecutionContext context = new ExecutionContext();
     private CalculatorFactory factory = new CalculatorFactory();
 
     public void run() {
@@ -22,12 +21,17 @@ public class Calculator {
 
             Command command = factory.getCommand(commandName);
             try {
-                command.execute(stack, context, params);
+                command.execute(context, params);
+                // System.out.println(context.getStack());
+            } catch (workflow.exeption.InvalidParameterException e) {
+                System.err.println(e.getMessage());
+            } catch (workflow.exeption.EmptyStackException e) {
+                System.err.println(e.getMessage());
             } catch (Exception e) {
-                System.err.println("Error executing command: " + e.getMessage());
+                System.err.println("Error executing command: " + e.toString());
             }
 
-            System.out.println(stack);
+            System.out.println(context);
         }
         scanner.close();
     }
@@ -37,4 +41,3 @@ public class Calculator {
         calculator.run();
     }
 }
-

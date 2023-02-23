@@ -1,7 +1,8 @@
 package workflow.Commands;
 
-import java.util.*;
+import workflow.ExecutionContext;
+import workflow.exeption.*;
 
 public interface Command {
-    void execute(Stack<Double> stack, Map<String, Double> context, String... params) throws Exception ;
+    void execute(ExecutionContext context, String... params) throws StackException, InvalidParameterException;
 }

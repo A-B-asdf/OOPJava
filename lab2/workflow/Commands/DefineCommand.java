@@ -1,14 +1,20 @@
 package workflow.Commands;
 
-import java.util.*;
+import workflow.ExecutionContext;
+import workflow.exeption.InvalidParameterException;
 
 public class DefineCommand implements Command {
-    public void execute(Stack<Double> stack, Map<String, Double> context, String... params) {
+    public void execute(ExecutionContext context, String... params) throws InvalidParameterException {
         if (params.length != 2) {
-            throw new IllegalArgumentException("Define command requires two parameters");
+            throw new InvalidParameterException("Define command requires two parameters");
         }
         String name = params[0];
-        Double value = Double.parseDouble(params[1]);
-        context.put(name, value);
+        Double value;
+        try {
+            value = Double.parseDouble(params[1]);
+        } catch (NumberFormatException e) {
+            throw new InvalidParameterException("Invalid value: " + params[1]);
+        }
+        context.getNamedParameters().put(name, value);
     }
 }

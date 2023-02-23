@@ -1,15 +1,19 @@
 package workflow.Commands;
 
-import java.util.*;
+import workflow.ExecutionContext;
+import workflow.exeption.*;
 
 public class AddCommand implements Command {
-    public void execute(Stack<Double> stack, Map<String, Double> context, String... params) {
-        if (stack.size() < 2) {
-            throw new IllegalStateException("Not enough operands on stack");
+    public void execute(ExecutionContext context, String... params) throws EmptyStackException, InvalidParameterException {
+        if (params.length != 0) {
+            throw new InvalidParameterException("Add command doesn't require any parameters");
         }
-        Double b = stack.pop();
-        Double a = stack.pop();
+        if (context.getStack().size() < 2) {
+            throw new EmptyStackException();
+        }
+        Double b = context.getStack().pop();
+        Double a = context.getStack().pop();
         Double result = a + b;
-        stack.push(result);
+        context.getStack().push(result);
     }
 }

@@ -1,19 +1,21 @@
 package workflow.Commands;
 
-import java.util.*;
-
-import java.lang.Math;
+import workflow.ExecutionContext;
+import workflow.exeption.*;
 
 public class SqrtCommand implements Command {
-    public void execute(Stack<Double> stack, Map<String, Double> context, String... params) {
-        if (stack.isEmpty()) {
-            throw new IllegalStateException("Stack is empty");
+    public void execute(ExecutionContext context, String... params) throws EmptyStackException, InvalidParameterException {
+        if (params.length != 0) {
+            throw new InvalidParameterException("Sqrt command doesn't require any parameters");
         }
-        Double a = stack.pop();
-        if (a < 0) {
-            throw new IllegalArgumentException("Cannot take square root of negative number");
+        if (context.getStack().isEmpty()) {
+            throw new EmptyStackException();
         }
+        if (context.getStack().peek() < 0) {
+            throw new IllegalArgumentException("Cannot take square root of a negative number");
+        }
+        Double a = context.getStack().pop();
         Double result = Math.sqrt(a);
-        stack.push(result);
+        context.getStack().push(result);
     }
 }

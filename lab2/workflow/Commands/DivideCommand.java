@@ -1,18 +1,24 @@
 package workflow.Commands;
 
-import java.util.*;
+import workflow.ExecutionContext;
+import workflow.exeption.*;
 
 public class DivideCommand implements Command {
-    public void execute(Stack<Double> stack, Map<String, Double> context, String... params) {
-        if (stack.size() < 2) {
-            throw new IllegalStateException("Not enough operands on stack");
+    public void execute(ExecutionContext context, String... params) throws NotEnoughOperandsException, InvalidParameterException {
+        if (params.length != 0) {
+            throw new InvalidParameterException("Divide command doesn't require any parameters");
         }
-        Double b = stack.pop();
+        if (context.getStack().size() < 2) {
+            throw new NotEnoughOperandsException();
+        }
+        Double b = context.getStack().pop();
+        Double a = context.getStack().pop();
         if (b == 0) {
+            context.getStack().push(a);
+            context.getStack().push(b);
             throw new IllegalArgumentException("Cannot divide by zero");
         }
-        Double a = stack.pop();
         Double result = a / b;
-        stack.push(result);
+        context.getStack().push(result);
     }
 }
