@@ -2,13 +2,25 @@ package workflow;
 
 import workflow.Commands.Command;
 
+import java.io.InputStream;
 import java.util.*;
+import java.util.logging.*;
 
 public class Calculator {
+    static Logger LOGGER;
+    static {
+        try (InputStream is = Calculator.class.getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(is);
+            LOGGER = Logger.getLogger(Calculator.class.getName());
+        } catch (Exception ignore) {
+            ignore.printStackTrace();
+        }
+    }
     private ExecutionContext context = new ExecutionContext();
     private CalculatorFactory factory = new CalculatorFactory();
 
     public void run() {
+        LOGGER.info("Calculator started");
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -21,13 +33,15 @@ public class Calculator {
 
             Command command = factory.getCommand(commandName);
             try {
+                LOGGER.info("Executing command " + commandName + " with parameters " + Arrays.toString(params));
                 command.execute(context, params);
-                // System.out.println(context.getStack());
-            } catch (workflow.exeption.InvalidParameterException e) {
-                System.err.println(e.getMessage());
-            } catch (workflow.exeption.EmptyStackException e) {
+            } catch (workflow.exeption.InvalidParameterException | workflow.exeption.EmptyStackException e) {
+                LOGGER.warning("Error executing command " + commandName + " with parameters " + Arrays.toString(params)
+                        + ": " + e.getMessage());
                 System.err.println(e.getMessage());
             } catch (Exception e) {
+                LOGGER.warning("Error executing command " + commandName + " with parameters " + Arrays.toString(params)
+                        + ": " + e.toString());
                 System.err.println("Error executing command: " + e.toString());
             }
 

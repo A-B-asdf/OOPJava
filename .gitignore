@@ -3,3 +3,4 @@ dump_to_a_single_file.py
 lib
 .vscode
 lab2/asdf
+*.log*
