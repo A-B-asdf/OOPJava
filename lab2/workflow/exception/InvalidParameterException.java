@@ -1,6 +1,6 @@
-package workflow.exeption;
+package workflow.exception;
 
-public class InvalidParameterException extends Exception {
+public class InvalidParameterException extends CalculatorException {
     public InvalidParameterException(String parameter) {
         super("Invalid parameter: " + parameter);
     }

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import workflow.ExecutionContext;
 import workflow.*;
 import workflow.Commands.*;
-import workflow.exeption.*;
+import workflow.exception.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

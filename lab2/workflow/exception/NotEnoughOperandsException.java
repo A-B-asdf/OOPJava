@@ -1,6 +1,6 @@
-package workflow.exeption;
+package workflow.exception;
 
-public class NotEnoughOperandsException extends StackException {
+public class NotEnoughOperandsException extends CalculatorException {
     public NotEnoughOperandsException() {
         super("Not enough operands on stack");
     }

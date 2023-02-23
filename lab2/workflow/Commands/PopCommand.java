@@ -1,7 +1,7 @@
 package workflow.Commands;
 
 import workflow.ExecutionContext;
-import workflow.exeption.*;
+import workflow.exception.*;
 
 public class PopCommand extends AbstractCommand implements CommandInterface, ResultIngInterface {
     private Double result;

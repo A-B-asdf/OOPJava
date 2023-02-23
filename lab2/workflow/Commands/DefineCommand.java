@@ -1,7 +1,7 @@
 package workflow.Commands;
 
 import workflow.ExecutionContext;
-import workflow.exeption.InvalidParameterException;
+import workflow.exception.InvalidParameterException;
 
 public class DefineCommand extends AbstractCommand implements CommandInterface {
     public void execute(ExecutionContext context, String... params) throws InvalidParameterException {

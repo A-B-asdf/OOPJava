@@ -1,6 +1,6 @@
-package workflow.exeption;
+package workflow.exception;
 
-public class EmptyStackException extends StackException {
+public class EmptyStackException extends CalculatorException {
     public EmptyStackException() {
         super("Stack is empty");
     }

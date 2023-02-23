@@ -1,7 +1,7 @@
 package workflow.Commands;
 
 import workflow.ExecutionContext;
-import workflow.exeption.*;
+import workflow.exception.*;
 
 public class MultiplyCommand extends AbstractCommand implements CommandInterface {
     public void execute(ExecutionContext context, String... params)

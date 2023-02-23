@@ -5,14 +5,11 @@ import workflow.Commands.AbstractCommand;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class CalculatorFactory {
-    /*
-     * This class reads the commands.properties file, which should be located in the
-     * same directory as the CalculatorFactory class.
-     * This file maps command names to fully qualified class names that implement
-     * the CommandInterface interface.
-     */
+    private static final Logger LOGGER = Logger.getLogger(CalculatorFactory.class.getName());
+
     private Map<String, Class<? extends AbstractCommand>> commandMap = new HashMap<>();
 
     public CalculatorFactory() {
@@ -24,8 +21,10 @@ public class CalculatorFactory {
                 Class<? extends AbstractCommand> commandClass = Class.forName(className)
                         .asSubclass(AbstractCommand.class);
                 commandMap.put(commandName, commandClass);
+                LOGGER.info("Added command mapping: " + commandName + " -> " + className);
             }
         } catch (IOException | ClassNotFoundException e) {
+            LOGGER.severe("Error loading command mappings: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -39,7 +39,7 @@ public class Calculator {
                 if (command instanceof ResultIngInterface) {
                     System.out.println(((ResultIngInterface) command).getResult());
                 }
-            } catch (workflow.exeption.InvalidParameterException | workflow.exeption.EmptyStackException e) {
+            } catch (workflow.exception.InvalidParameterException | workflow.exception.EmptyStackException e) {
                 LOGGER.warning("Error executing command " + commandName + " with parameters " + Arrays.toString(params)
                         + ": " + e.getMessage());
                 System.err.println(e.getMessage());
