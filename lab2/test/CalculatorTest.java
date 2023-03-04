@@ -8,6 +8,9 @@ import workflow.exception.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 public class CalculatorTest {
     @Test
     public void testPushCommand() throws InvalidParameterException {
@@ -31,14 +34,20 @@ public class CalculatorTest {
 
     @Test
     public void testPopCommand() throws EmptyStackException, InvalidParameterException {
+        // Create a test output stream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(5.0);
+
         PopCommand command = new PopCommand();
+        command.SetPrintStream(printStream);
 
         // Test popping a value from the stack
         command.execute(context);
         assertEquals(0, context.getStack().size());
-        assertEquals(5.0, command.getResult());
+        assertEquals("5.0\n", outputStream.toString());
 
         // Test popping from an empty stack
         assertThrows(EmptyStackException.class, () -> command.execute(context));
@@ -99,9 +108,14 @@ public class CalculatorTest {
     // Test whether the PopCommand removes the top value from the stack when the
     // stack is non-empty.
     public void testPopCommandNonEmptyStack() throws Exception {
+        // Create a test output stream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+
         ExecutionContext context = new ExecutionContext();
         context.getStack().push(3.0);
         PopCommand popCommand = new PopCommand();
+        popCommand.SetPrintStream(printStream);
         popCommand.execute(context);
         assertTrue(context.getStack().isEmpty());
     }

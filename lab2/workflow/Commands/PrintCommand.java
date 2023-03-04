@@ -1,10 +1,16 @@
 package workflow.Commands;
 
+import java.io.PrintStream;
+
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
-public class PrintCommand extends AbstractCommand implements CommandInterface, ResultIngInterface {
-    private Double result;
+public class PrintCommand extends AbstractCommand implements CommandInterface, PrintingResult {
+    public PrintStream outStream;
+
+    public void SetPrintStream(PrintStream outputStream) {
+        outStream = outputStream;
+    }
 
     public void execute(ExecutionContext context, String... params)
             throws EmptyStackException, InvalidParameterException {
@@ -14,10 +20,6 @@ public class PrintCommand extends AbstractCommand implements CommandInterface, R
         if (context.getStack().isEmpty()) {
             throw new EmptyStackException();
         }
-        result = context.getStack().peek();
-    }
-
-    public Double getResult() {
-        return result;
+        outStream.println(context.getStack().peek());
     }
 }

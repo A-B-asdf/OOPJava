@@ -1,10 +1,16 @@
 package workflow.Commands;
 
+import java.io.PrintStream;
+
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
-public class PopCommand extends AbstractCommand implements CommandInterface, ResultIngInterface {
-    private Double result;
+public class PopCommand extends AbstractCommand implements CommandInterface, PrintingResult {
+    public PrintStream outStream;
+
+    public void SetPrintStream(PrintStream outputStream) {
+        outStream = outputStream;
+    }
 
     public void execute(ExecutionContext context, String... params)
             throws EmptyStackException, InvalidParameterException {
@@ -14,10 +20,6 @@ public class PopCommand extends AbstractCommand implements CommandInterface, Res
         if (context.getStack().isEmpty()) {
             throw new EmptyStackException();
         }
-        result = context.getStack().pop();
-    }
-
-    public Double getResult() {
-        return result;
+        outStream.println(context.getStack().pop());
     }
 }
