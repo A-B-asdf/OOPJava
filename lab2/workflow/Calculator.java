@@ -2,7 +2,6 @@ package workflow;
 
 import workflow.Commands.AbstractCommand;
 import workflow.Commands.PrintingResult;
-import workflow.Commands.ResultIngInterface;
 
 import java.io.InputStream;
 import java.util.*;
