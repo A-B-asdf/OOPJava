@@ -18,7 +18,7 @@ public class Calculator {
         }
     }
     private ExecutionContext context = new ExecutionContext();
-    private CalculatorFactory factory = new CalculatorFactory();
+    private CommandFactory factory = new CommandFactory();
 
     public void run() {
         LOGGER.info("Calculator started");
@@ -49,7 +49,7 @@ public class Calculator {
                 System.err.println("Error executing command: " + e.toString());
             }
 
-            System.out.println(context);
+            LOGGER.info(context.toString());
         }
         scanner.close();
     }

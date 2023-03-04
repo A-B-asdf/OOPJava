@@ -7,13 +7,13 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class CalculatorFactory {
-    private static final Logger LOGGER = Logger.getLogger(CalculatorFactory.class.getName());
+public class CommandFactory {
+    private static final Logger LOGGER = Logger.getLogger(CommandFactory.class.getName());
 
     private Map<String, Class<? extends AbstractCommand>> commandMap = new HashMap<>();
 
-    public CalculatorFactory() {
-        try (InputStream is = CalculatorFactory.class.getResourceAsStream("commands.properties")) {
+    public CommandFactory() {
+        try (InputStream is = CommandFactory.class.getResourceAsStream("commands.properties")) {
             Properties props = new Properties();
             props.load(is);
             for (String commandName : props.stringPropertyNames()) {
