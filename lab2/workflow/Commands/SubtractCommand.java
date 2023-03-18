@@ -3,7 +3,7 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
-public class SubtractCommand extends AbstractCommand implements CommandInterface {
+public class SubtractCommand extends AbstractCommand {
     public void execute(ExecutionContext context, String... params)
             throws NotEnoughOperandsException, InvalidParameterException {
         if (params.length != 0) {

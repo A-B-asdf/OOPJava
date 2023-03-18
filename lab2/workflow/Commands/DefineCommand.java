@@ -3,7 +3,16 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exception.InvalidParameterException;
 
-public class DefineCommand extends AbstractCommand implements CommandInterface {
+/**
+ * Executes the define operation with the given ExecutionContext and parameters.
+ * Defines a named parameter with the given value in the execution context.
+ */
+public class DefineCommand extends AbstractCommand {
+    /**
+     * @param context the execution context
+     * @param params  the command parameters (name and value)
+     * @throws InvalidParameterException if the command parameters are invalid
+     */
     public void execute(ExecutionContext context, String... params) throws InvalidParameterException {
         if (params.length != 2) {
             throw new InvalidParameterException("Define command requires two parameters");

@@ -19,9 +19,16 @@ public class Calculator {
             ignore.printStackTrace();
         }
     }
+
     private ExecutionContext context = new ExecutionContext();
+
     private CommandFactory factory = new CommandFactory();
 
+    /**
+     * Runs the calculator using the specified input stream.
+     *
+     * @param inputStream the input stream to read from
+     */
     public void run(InputStream inputStream) {
         LOGGER.info("Calculator started");
         Scanner scanner = new Scanner(inputStream);
@@ -56,6 +63,9 @@ public class Calculator {
         scanner.close();
     }
 
+    /**
+     * @return the execution context for the calculator
+     */
     public ExecutionContext getContext() {
         return this.context;
     }

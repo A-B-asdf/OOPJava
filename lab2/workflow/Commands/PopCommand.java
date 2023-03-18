@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
-public class PopCommand extends AbstractCommand implements CommandInterface, PrintingResult {
+public class PopCommand extends AbstractCommand implements PrintingResult {
     public PrintStream outStream;
 
     public void SetPrintStream(PrintStream outputStream) {

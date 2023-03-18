@@ -3,7 +3,11 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
-public class AddCommand extends AbstractCommand implements CommandInterface {
+/**
+ * Executes the addition operation with the given ExecutionContext and parameters.
+ * Pops two operands from the stack, adds them, and pushes the result onto the stack.
+ */
+public class AddCommand extends AbstractCommand {
     public void execute(ExecutionContext context, String... params)
             throws EmptyStackException, InvalidParameterException {
         if (params.length != 0) {

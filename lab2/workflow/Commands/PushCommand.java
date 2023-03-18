@@ -3,7 +3,7 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exception.InvalidParameterException;
 
-public class PushCommand extends AbstractCommand implements CommandInterface {
+public class PushCommand extends AbstractCommand {
     public void execute(ExecutionContext context, String... params) throws InvalidParameterException {
         if (params.length != 1) {
             throw new InvalidParameterException("Push command requires one parameter");

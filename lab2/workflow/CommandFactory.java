@@ -7,11 +7,20 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * A factory class for creating commands.
+ */
 public class CommandFactory {
     private static final Logger LOGGER = Logger.getLogger(CommandFactory.class.getName());
 
+    /**
+     * The map of command names to command classes.
+     */
     private Map<String, Class<? extends AbstractCommand>> commandMap = new HashMap<>();
 
+    /**
+     * Creates a new CommandFactory and initializes the command map from a properties file.
+     */
     public CommandFactory() {
         try (InputStream is = CommandFactory.class.getResourceAsStream("commands.properties")) {
             Properties props = new Properties();
@@ -29,6 +38,13 @@ public class CommandFactory {
         }
     }
 
+    /**
+     * Gets a command object for the specified command name.
+     *
+     * @param commandName the name of the command
+     * @return a command object for the specified command name
+     * @throws IllegalArgumentException if the command name is unknown
+     */
     public AbstractCommand getCommand(String commandName) {
         Class<? extends AbstractCommand> commandClass = commandMap.get(commandName);
         if (commandClass == null) {
