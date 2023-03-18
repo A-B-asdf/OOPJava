@@ -4,15 +4,10 @@ import workflow.ExecutionContext;
 import workflow.exception.InvalidParameterException;
 
 /**
- * Executes the define operation with the given ExecutionContext and parameters.
- * Defines a named parameter with the given value in the execution context.
+ * DefineCommand is an implementation of the AbstractCommand that associates a name with a numeric value
+ * in the ExecutionContext's named parameters map.
  */
 public class DefineCommand extends AbstractCommand {
-    /**
-     * @param context the execution context
-     * @param params  the command parameters (name and value)
-     * @throws InvalidParameterException if the command parameters are invalid
-     */
     public void execute(ExecutionContext context, String... params) throws InvalidParameterException {
         if (params.length != 2) {
             throw new InvalidParameterException("Define command requires two parameters");

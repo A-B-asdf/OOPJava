@@ -5,6 +5,10 @@ import java.io.PrintStream;
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
+/**
+ * PrintCommand is an implementation of the AbstractCommand that prints the top element of the stack
+ * to the specified output stream without removing it from the stack.
+ */
 public class PrintCommand extends AbstractCommand implements PrintingResult {
     public PrintStream outStream;
 

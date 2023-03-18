@@ -3,6 +3,10 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
+/**
+ * SubtractCommand is an implementation of the AbstractCommand that subtracts the top element on the stack
+ * from the second top element and pushes the result back onto the stack.
+ */
 public class SubtractCommand extends AbstractCommand {
     public void execute(ExecutionContext context, String... params)
             throws NotEnoughOperandsException, InvalidParameterException {

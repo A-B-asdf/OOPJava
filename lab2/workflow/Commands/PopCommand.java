@@ -5,6 +5,10 @@ import java.io.PrintStream;
 import workflow.ExecutionContext;
 import workflow.exception.*;
 
+/**
+ * PopCommand is an implementation of the AbstractCommand that removes the top element from the stack
+ * and prints it to the specified output stream.
+ */
 public class PopCommand extends AbstractCommand implements PrintingResult {
     public PrintStream outStream;
 

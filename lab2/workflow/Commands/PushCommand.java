@@ -3,6 +3,10 @@ package workflow.Commands;
 import workflow.ExecutionContext;
 import workflow.exception.InvalidParameterException;
 
+/**
+ * PushCommand is an implementation of the AbstractCommand that pushes a value onto the stack.
+ * The value can be a named parameter or a numeric value.
+ */
 public class PushCommand extends AbstractCommand {
     public void execute(ExecutionContext context, String... params) throws InvalidParameterException {
         if (params.length != 1) {

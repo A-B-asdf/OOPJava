@@ -4,8 +4,8 @@ import workflow.ExecutionContext;
 import workflow.exception.*;
 
 /**
- * Executes the addition operation with the given ExecutionContext and parameters.
- * Pops two operands from the stack, adds them, and pushes the result onto the stack.
+ * AddCommand is an implementation of the AbstractCommand that adds the two top elements on the stack
+ * and pushes the result back onto the stack.
  */
 public class AddCommand extends AbstractCommand {
     public void execute(ExecutionContext context, String... params)

@@ -4,17 +4,10 @@ import workflow.ExecutionContext;
 import workflow.exception.*;
 
 /**
- * A command that pops the top value from the stack, takes the square root of the value, and pushes the
- * result back onto the stack.
+ * SqrtCommand is an implementation of the AbstractCommand that calculates the square root of the
+ * top element on the stack and pushes the result back onto the stack. Throws a MathException if the top element is negative.
  */
 public class SqrtCommand extends AbstractCommand {
-    /**
-     * @param context the ExecutionContext containing the stack and named parameters
-     * @param params this command doesn't require any parameters
-     * @throws NotEnoughOperandsException if there are no operands on the stack
-     * @throws InvalidParameterException if there are any parameters passed to this command
-     * @throws MathException if attempting to take the square root of a negative number
-     */
     public void execute(ExecutionContext context, String... params)
             throws NotEnoughOperandsException, InvalidParameterException, MathException {
         if (params.length != 0) {
