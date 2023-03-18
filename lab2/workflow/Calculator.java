@@ -3,6 +3,8 @@ package workflow;
 import workflow.Commands.AbstractCommand;
 import workflow.Commands.PrintingResult;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.logging.*;
@@ -20,9 +22,9 @@ public class Calculator {
     private ExecutionContext context = new ExecutionContext();
     private CommandFactory factory = new CommandFactory();
 
-    public void run() {
+    public void run(InputStream inputStream) {
         LOGGER.info("Calculator started");
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(inputStream);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             String[] parts = line.split("\\s+");
@@ -60,6 +62,15 @@ public class Calculator {
 
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
-        calculator.run();
+        if (args.length == 1) {
+            try (InputStream inputStream = new FileInputStream(args[0])) {
+                calculator.run(inputStream);
+            } catch (IOException e) {
+                System.err.println("Error reading from file: " + e.getMessage());
+                return;
+            }
+        } else {
+            calculator.run(System.in);
+        }
     }
 }
