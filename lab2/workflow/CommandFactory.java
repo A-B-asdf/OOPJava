@@ -34,6 +34,8 @@ public class CommandFactory {
             }
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.severe("Error loading command mappings: " + e.getMessage());
+        } catch (ClassCastException e) {
+            LOGGER.severe("Error loading command mappings: " + e.getMessage());
             e.printStackTrace();
         }
     }
