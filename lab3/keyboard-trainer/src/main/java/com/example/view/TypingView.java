@@ -10,53 +10,99 @@ import com.example.controller.TypingController;
 import com.example.model.TypingModel;
 
 public class TypingView extends JFrame {
-    private JTextPane sampleTextPane;
-    private JTextPane userInputTextPane;
     private TypingController controller;
 
     public TypingView(TypingModel model, TypingController controller) {
         this.controller = controller;
         setTitle("Клавиатурный тренажер");
-        setSize(800, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
 
-        sampleTextPane = new JTextPane();
-        sampleTextPane.setText(model.getSampleText());
-        sampleTextPane.setEditable(false);
-        sampleTextPane.setBackground(Color.LIGHT_GRAY);
+        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
 
-        userInputTextPane = new JTextPane();
-        userInputTextPane.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                controller.handleKeyTyped(e.getKeyChar());
-                updateView(model);
-            }
-        });
-
-        setLayout(new BorderLayout());
-        add(sampleTextPane, BorderLayout.NORTH);
-        add(userInputTextPane, BorderLayout.CENTER);
+        JPanel contentPane = new ContentPane(screenHeight, screenWidth);
+        setContentPane(contentPane);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-    public void updateView(TypingModel model) {
-        String userInput = model.getUserText();
-        String sampleText = model.getSampleText();
-        StyledDocument doc = sampleTextPane.getStyledDocument();
-        Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-        Style correctStyle = doc.addStyle("CORRECT_STYLE", defaultStyle);
-        StyleConstants.setForeground(correctStyle, Color.GREEN);
-        Style incorrectStyle = doc.addStyle("INCORRECT_STYLE", defaultStyle);
-        StyleConstants.setForeground(incorrectStyle, Color.RED);
+    private class ContentPane extends JPanel {
+        public ContentPane(int screenHeight, int screenWidth) {
+            setBackground(Color.WHITE);
+            setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
 
-        int length = userInput.length();
-        for (int i = 0; i < length; i++) {
-            if (i < sampleText.length() && userInput.charAt(i) == sampleText.charAt(i)) {
-                doc.setCharacterAttributes(i, 1, correctStyle, true);
-            } else {
-                doc.setCharacterAttributes(i, 1, incorrectStyle, true);
-            }
+            int topPaneHeight = 50;
+            TopPane topPane = new TopPane(screenWidth, topPaneHeight);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.NORTH;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weightx = 1;
+            gbc.weighty = 0;
+            add(topPane, gbc);
+
+            JPanel mainPane = new MainPane(screenHeight - topPaneHeight, screenWidth);
+
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.weightx = 0;
+            gbc.weighty = 1;
+            add(mainPane, gbc);
         }
-        userInputTextPane.requestFocus();
+    }
+
+    private class TopPane extends JPanel {
+        public TopPane(int screenWidth, int topPaneHeight) {
+            setBackground(Color.LIGHT_GRAY);
+            setPreferredSize(new Dimension(screenWidth, topPaneHeight));
+            setLayout(new BorderLayout());
+
+            LogoPane logoPane = new LogoPane();
+            add(logoPane, BorderLayout.WEST);
+
+            ButtonsPane buttonsPane = new ButtonsPane();
+            add(buttonsPane, BorderLayout.EAST);
+        }
+    }
+
+    private class LogoPane extends JPanel {
+        public LogoPane() {
+            setBackground(Color.YELLOW);
+
+            JLabel logoLabel = new JLabel("Клавиатурный тренажер");
+            add(logoLabel);
+        }
+    }
+
+    private class ButtonsPane extends JPanel {
+        public ButtonsPane() {
+            setBackground(Color.GREEN);
+            setLayout(new FlowLayout(FlowLayout.CENTER));
+
+            JButton button1 = new JButton("Кнопка 1");
+            JButton button2 = new JButton("Кнопка 2");
+            JButton button3 = new JButton("Кнопка 3");
+
+            add(button1);
+            add(button2);
+            add(button3);
+        }
+    }
+
+    private class MainPane extends JPanel {
+        public MainPane(int parentHeight, int parentWidth) {
+            setBackground(Color.LIGHT_GRAY);
+            double width2Height = 1.5;
+            double screen2Pane = 0.9;
+            int mainPaneHeight = (int) (Math.min(parentHeight, (int) (parentWidth / width2Height))
+                    * screen2Pane);
+            int mainPaneWidth = (int) (mainPaneHeight * width2Height);
+            setPreferredSize(new Dimension(mainPaneWidth, mainPaneHeight));
+        }
     }
 }
