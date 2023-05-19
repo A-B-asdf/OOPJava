@@ -12,12 +12,11 @@ import com.example.model.TypingModel;
 public class TypingView extends JFrame {
     private TypingController controller;
     private TypingModel model;
-    private JTextPane sampleTextPane;
-    private JTextPane inputTextPane;
 
     public TypingView(TypingModel model, TypingController controller) {
-        this.controller = controller;
         this.model = model;
+        this.controller = controller;
+
         setTitle("Клавиатурный тренажер");
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
@@ -40,6 +39,7 @@ public class TypingView extends JFrame {
             GridBagConstraints gbc = new GridBagConstraints();
 
             int topPaneHeight = 50;
+
             TopPane topPane = new TopPane(screenWidth, topPaneHeight);
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -49,7 +49,7 @@ public class TypingView extends JFrame {
             gbc.weighty = 0;
             add(topPane, gbc);
 
-            JPanel mainPane = new MainPane(screenHeight - topPaneHeight, screenWidth);
+            MainPane mainPane = new MainPane(model, controller, screenHeight - topPaneHeight, screenWidth);
 
             gbc.gridx = 0;
             gbc.gridy = 1;
@@ -119,94 +119,6 @@ public class TypingView extends JFrame {
             add(button3);
             add(Box.createHorizontalStrut(10)); // Добавляем пробел высотой 10 пикселей
             add(Box.createHorizontalGlue());
-        }
-    }
-
-    private class MainPane extends JPanel {
-        public MainPane(int parentHeight, int parentWidth) {
-            setBackground(Color.LIGHT_GRAY);
-            double width2Height = 1.5;
-            double screen2Pane = 0.9;
-            int mainPaneHeight = (int) (Math.min(parentHeight, (int) (parentWidth / width2Height)) * screen2Pane);
-            int mainPaneWidth = (int) (mainPaneHeight * width2Height);
-            setPreferredSize(new Dimension(mainPaneWidth, mainPaneHeight));
-
-            JPanel typingPane = new JPanel(); // Обертка для sampleTextPane и inputTextPane
-            typingPane.setLayout(new GridLayout(1, 2));
-
-            sampleTextPane = new JTextPane();
-            sampleTextPane.setText(model.getSampleText());
-            sampleTextPane.setEditable(false);
-            sampleTextPane.setBackground(Color.LIGHT_GRAY);
-
-            inputTextPane = new JTextPane();
-            inputTextPane.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    controller.handleKeyTyped(e.getKeyChar());
-                    updateView(model);
-                }
-            });
-
-            typingPane.add(sampleTextPane);
-            typingPane.add(inputTextPane);
-
-            setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.fill = GridBagConstraints.BOTH; // Используйте BOTH для заполнения доступного пространства
-            gbc.weightx = 1;
-            gbc.weighty = 0.3; // Установите фиксированную высоту панели
-            add(typingPane, gbc);
-
-            StatisticView StatisticView = new StatisticView(); // Замените StatisticView на фактический класс вашей
-                                                               // панели
-            gbc.gridy = 1;
-            gbc.weighty = 0.4; // Установите фиксированную высоту панели
-            add(StatisticView, gbc);
-
-            AnimationView AnimationView = new AnimationView(); // Замените AnimationView на фактический класс вашей
-                                                               // панели
-            gbc.gridy = 2;
-            gbc.weighty = 0.3; // Установите фиксированную высоту панели
-            add(AnimationView, gbc);
-        }
-    }
-
-    public void updateView(TypingModel model) {
-        String userInput = model.getUserText();
-        String sampleText = model.getSampleText();
-        StyledDocument doc = sampleTextPane.getStyledDocument();
-        Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-        Style correctStyle = doc.addStyle("CORRECT_STYLE", defaultStyle);
-        StyleConstants.setForeground(correctStyle, Color.GREEN);
-        Style incorrectStyle = doc.addStyle("INCORRECT_STYLE", defaultStyle);
-        StyleConstants.setForeground(incorrectStyle, Color.RED);
-
-        int length = userInput.length();
-        for (int i = 0; i < length; i++) {
-            if (i < sampleText.length() && userInput.charAt(i) == sampleText.charAt(i)) {
-                doc.setCharacterAttributes(i, 1, correctStyle, true);
-            } else {
-                doc.setCharacterAttributes(i, 1, incorrectStyle, true);
-            }
-        }
-        inputTextPane.requestFocus();
-    }
-
-    public class StatisticView extends JPanel {
-
-        public StatisticView() {
-            setBackground(Color.GREEN);
-        }
-    }
-
-    public class AnimationView extends JPanel {
-
-        public AnimationView() {
-            setBackground(Color.CYAN);
         }
     }
 }
