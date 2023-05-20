@@ -13,8 +13,8 @@ public class MainPane extends JPanel {
     private TypingController controller;
     private TypingModel model;
 
-    private JTextPane sampleTextPane;
-    private JTextPane inputTextPane;
+    private SampleTextPane sampleTextPane;
+    private InputTextPane inputTextPane;
 
     public MainPane(TypingModel model, TypingController controller, int parentHeight, int parentWidth) {
         this.model = model;
@@ -30,19 +30,9 @@ public class MainPane extends JPanel {
         JPanel typingPane = new JPanel(); // Обертка для sampleTextPane и inputTextPane
         typingPane.setLayout(new GridLayout(1, 2));
 
-        sampleTextPane = new JTextPane();
-        sampleTextPane.setText(model.getSampleText());
-        sampleTextPane.setEditable(false);
-        sampleTextPane.setBackground(Color.LIGHT_GRAY);
+        sampleTextPane = new SampleTextPane(model.getSampleText());
 
-        inputTextPane = new JTextPane();
-        inputTextPane.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                controller.handleKeyTyped(e.getKeyChar());
-                updateView(model);
-            }
-        });
+        inputTextPane = new InputTextPane();
 
         typingPane.add(sampleTextPane);
         typingPane.add(inputTextPane);
@@ -57,15 +47,37 @@ public class MainPane extends JPanel {
         gbc.weighty = 0.3;
         add(typingPane, gbc);
 
-        StatisticView StatisticView = new StatisticView();
+        StatisticView statisticView = new StatisticView();
         gbc.gridy = 1;
         gbc.weighty = 0.4;
-        add(StatisticView, gbc);
+        add(statisticView, gbc);
 
-        AnimationView AnimationView = new AnimationView();
+        AnimationView animationView = new AnimationView();
         gbc.gridy = 2;
         gbc.weighty = 0.3;
-        add(AnimationView, gbc);
+        add(animationView, gbc);
+    }
+
+    public class SampleTextPane extends JTextPane {
+
+        public SampleTextPane(String text) {
+            setText(text);
+            setEditable(false);
+            setBackground(Color.LIGHT_GRAY);
+        }
+    }
+
+    public class InputTextPane extends JTextPane {
+
+        public InputTextPane() {
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    controller.handleKeyTyped(e.getKeyChar());
+                    updateView(model);
+                }
+            });
+        }
     }
 
     public void updateView(TypingModel model) {
@@ -78,8 +90,9 @@ public class MainPane extends JPanel {
         Style incorrectStyle = doc.addStyle("INCORRECT_STYLE", defaultStyle);
         StyleConstants.setForeground(incorrectStyle, Color.RED);
 
-        int length = userInput.length();
-        for (int i = 0; i < length; i++) {
+        int cursorPosition = model.getCursorPosition();
+        for (int i = (cursorPosition != 0 ? cursorPosition - 1 : 0); i <= cursorPosition
+                && i < userInput.length(); i++) {
             if (i < sampleText.length() && userInput.charAt(i) == sampleText.charAt(i)) {
                 doc.setCharacterAttributes(i, 1, correctStyle, true);
             } else {
@@ -89,3 +102,8 @@ public class MainPane extends JPanel {
         inputTextPane.requestFocus();
     }
 }
+/*
+ * Короче нужно перенести апдейт в контроллер, из апдейта оформление перенести
+ * во вью, сделать статические константы.
+ * Будет основной апдейт MainPane, который будет вызывать апдейты своих полей
+ */
