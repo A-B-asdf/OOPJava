@@ -7,11 +7,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 import com.example.controller.TypingController;
-import com.example.model.TypingModel;
+import com.example.model.*;
 
 public class TypingView extends JFrame {
     private TypingController controller;
     private TypingModel model;
+    private Statistics statistics;
+
+    MainPane mainPane;
 
     public TypingView(TypingModel model, TypingController controller) {
         this.model = model;
@@ -32,6 +35,10 @@ public class TypingView extends JFrame {
         setVisible(true);
     }
 
+    public void setStatistics(Statistics statistics) {
+        this.statistics = statistics;
+    }
+
     private class ContentPane extends JPanel {
         public ContentPane(int screenHeight, int screenWidth) {
             setBackground(Color.WHITE);
@@ -49,7 +56,7 @@ public class TypingView extends JFrame {
             gbc.weighty = 0;
             add(topPane, gbc);
 
-            MainPane mainPane = new MainPane(model, controller, screenHeight - topPaneHeight, screenWidth);
+            mainPane = new MainPane(model, controller, screenHeight - topPaneHeight, screenWidth);
 
             gbc.gridx = 0;
             gbc.gridy = 1;
@@ -120,5 +127,9 @@ public class TypingView extends JFrame {
             add(Box.createHorizontalStrut(10)); // Добавляем пробел высотой 10 пикселей
             add(Box.createHorizontalGlue());
         }
+    }
+
+    public void update(TypingModel model) {
+        mainPane.update(model);
     }
 }
