@@ -1,5 +1,8 @@
 package com.example.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -7,129 +10,191 @@ import java.awt.*;
 import java.awt.event.*;
 
 import com.example.controller.TypingController;
-import com.example.model.*;
+import com.example.model.TypingModel;
 
-public class TypingView extends JFrame {
+public class TypingView extends JPanel {
     private TypingController controller;
     private TypingModel model;
-    private Statistics statistics;
 
-    MainPane mainPane;
+    private SampleTextPane sampleTextPane;
+    private InputTextPane inputTextPane;
 
-    public TypingView(TypingModel model, TypingController controller) {
+    static final int ADD_TEXT = 1;
+    static final int REMOVE_TEXT = -1;
+
+    public TypingView(TypingModel model, TypingController controller, int parentHeight, int parentWidth) {
         this.model = model;
         this.controller = controller;
 
-        setTitle("Клавиатурный тренажер");
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setUndecorated(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBackground(Color.LIGHT_GRAY);
+        double width2Height = 1.5;
+        double screen2Pane = 0.9;
+        int mainPaneHeight = (int) (Math.min(parentHeight, (int) (parentWidth / width2Height)) * screen2Pane);
+        int mainPaneWidth = (int) (mainPaneHeight * width2Height);
+        setPreferredSize(new Dimension(mainPaneWidth, mainPaneHeight));
 
-        int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
-        int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        JPanel typingPane = new JPanel(); // Обертка для sampleTextPane и inputTextPane
+        typingPane.setLayout(new GridLayout(1, 2));
 
-        JPanel contentPane = new ContentPane(screenHeight, screenWidth);
-        setContentPane(contentPane);
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
+        sampleTextPane = new SampleTextPane(model);
+
+        inputTextPane = new InputTextPane(model);
+
+        typingPane.add(sampleTextPane.getScrollPane());
+        typingPane.add(inputTextPane.getScrollPane());
+
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH; // BOTH для заполнения доступного пространства
+        gbc.weightx = 1;
+        gbc.weighty = 0.3;
+        add(typingPane, gbc);
+
+        StatisticView statisticView = new StatisticView();
+        gbc.gridy = 1;
+        gbc.weighty = 0.4;
+        add(statisticView, gbc);
+
+        AnimationView animationView = new AnimationView();
+        gbc.gridy = 2;
+        gbc.weighty = 0.3;
+        add(animationView, gbc);
     }
 
-    public void setStatistics(Statistics statistics) {
-        this.statistics = statistics;
-    }
+    public class TextPane extends JTextPane {
+        protected JScrollPane scrollPane;
 
-    private class ContentPane extends JPanel {
-        public ContentPane(int screenHeight, int screenWidth) {
-            setBackground(Color.WHITE);
-            setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
+        public TextPane() {
+            setEditable(false);
+            setFont(new Font("Monospaced", Font.PLAIN, 48));
+            this.scrollPane = new JScrollPane(this);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        }
 
-            int topPaneHeight = 50;
-
-            TopPane topPane = new TopPane(screenWidth, topPaneHeight);
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.anchor = GridBagConstraints.NORTH;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 1;
-            gbc.weighty = 0;
-            add(topPane, gbc);
-
-            mainPane = new MainPane(model, controller, screenHeight - topPaneHeight, screenWidth);
-
-            gbc.gridx = 0;
-            gbc.gridy = 1;
-            gbc.anchor = GridBagConstraints.CENTER;
-            gbc.fill = GridBagConstraints.NONE;
-            gbc.weightx = 0;
-            gbc.weighty = 1;
-            add(mainPane, gbc);
+        public JScrollPane getScrollPane() {
+            return scrollPane;
         }
     }
 
-    private class TopPane extends JPanel {
-        public TopPane(int screenWidth, int topPaneHeight) {
+    public class SampleTextPane extends TextPane {
+        private StyledDocument doc;
+        private Style defaultStyle;
+        private Style correctStyle;
+        private Style incorrectStyle;
+
+        public SampleTextPane(TypingModel model) {
+            super();
+            setText(model.getSampleText());
+            setEditable(false);
             setBackground(Color.LIGHT_GRAY);
-            setPreferredSize(new Dimension(screenWidth, topPaneHeight));
-            setLayout(new BorderLayout());
 
-            LogoPane logoPane = new LogoPane();
-            add(logoPane, BorderLayout.WEST);
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-            ButtonsPane buttonsPane = new ButtonsPane();
-            add(buttonsPane, BorderLayout.EAST);
+            doc = getStyledDocument();
+            defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+            correctStyle = doc.addStyle("CORRECT_STYLE", defaultStyle);
+            StyleConstants.setForeground(correctStyle, Color.GREEN);
+            incorrectStyle = doc.addStyle("INCORRECT_STYLE", defaultStyle);
+            StyleConstants.setForeground(incorrectStyle, Color.RED);
+        }
+
+        public void setDefaultStyle(int position) {
+            doc.setCharacterAttributes(position, 1, defaultStyle, true);
+        }
+
+        public void setCorrectStyle(int position) {
+            doc.setCharacterAttributes(position, 1, correctStyle, true);
+        }
+
+        public void setIncorrectStyle(int position) {
+            doc.setCharacterAttributes(position, 1, incorrectStyle, true);
+        }
+
+        public void update(TypingModel model) {
+            String userInput = model.getUserText();
+            String sampleText = model.getSampleText();
+            int cursorPosition = model.getCursorPosition();
+            for (int i = (cursorPosition != 0 ? cursorPosition - 1 : 0); i < sampleText.length(); i++) {
+                if (i < model.getCursorPosition()) {
+                    if (userInput.charAt(i) == sampleText.charAt(i)) {
+                        sampleTextPane.setCorrectStyle(i);
+                    } else {
+                        sampleTextPane.setIncorrectStyle(i);
+                    }
+                } else {
+                    sampleTextPane.setDefaultStyle(i);
+                }
+            }
         }
     }
 
-    private class LogoPane extends JPanel {
-        public LogoPane() {
-            setBackground(Color.YELLOW);
-            setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.CENTER;
+    public class InputTextPane extends TextPane {
+        private StyledDocument doc;
+        private Style defaultStyle;
+        private Style hiddenStyle;
 
-            JLabel logoLabel = new JLabel("Клавиатурный тренажер");
+        public InputTextPane(TypingModel model) {
+            super();
+            setText(model.getUserText());
+            scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-            // Изменяем шрифт
-            logoLabel.setFont(new Font("Arial", Font.BOLD, 24));
+            doc = getStyledDocument();
+            defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+            hiddenStyle = doc.addStyle("CORRECT_STYLE", defaultStyle);
+            StyleConstants.setForeground(hiddenStyle, Color.WHITE);
 
-            // Изменяем цвет шрифта
-            logoLabel.setForeground(Color.ORANGE);
+            setHiddenStyle(0, model.getUserText().length());
 
-            // Добавляем отступы
-            logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-            add(logoLabel, gbc);
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    controller.handleKeyTyped(e.getKeyChar());
+                }
+            });
         }
-    }
 
-    private class ButtonsPane extends JPanel {
-        public ButtonsPane() {
-            setBackground(Color.GREEN);
-            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        public void setDefaultStyle(int position, int length) {
+            doc.setCharacterAttributes(position, length, defaultStyle, true);
+        }
 
-            JButton button1 = new JButton("Кнопка 1");
-            JButton button2 = new JButton("Кнопка 2");
-            JButton button3 = new JButton("Кнопка 3");
+        public void setHiddenStyle(int position, int length) {
+            doc.setCharacterAttributes(position, length, hiddenStyle, true);
+        }
 
-            button1.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the buttons horizontally
-            button2.setAlignmentX(Component.CENTER_ALIGNMENT);
-            button3.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-            add(Box.createHorizontalGlue());
-            add(Box.createHorizontalStrut(10)); // Добавляем пробел высотой 10 пикселей
-            add(button1);
-            add(Box.createHorizontalStrut(10)); // Добавляем пробел высотой 10 пикселей
-            add(button2);
-            add(Box.createHorizontalStrut(10)); // Добавляем пробел высотой 10 пикселей
-            add(button3);
-            add(Box.createHorizontalStrut(10)); // Добавляем пробел высотой 10 пикселей
-            add(Box.createHorizontalGlue());
+        public void update(TypingModel model) {
+            inputTextPane.setText(model.getUserText());
+            inputTextPane.requestFocus();
+            setDefaultStyle(0, model.getCursorPosition());
+            setHiddenStyle(model.getCursorPosition(), model.getTextLength() -
+                    model.getCursorPosition());
         }
     }
 
     public void update(TypingModel model) {
-        mainPane.update(model);
+        sampleTextPane.update(model);
+        inputTextPane.update(model);
+        int cursorPosition = model.getCursorPosition();
+
+        // Scroll to cursor position
+        try {
+            int endPosition = sampleTextPane.getDocument().getLength();
+            Rectangle cursorRectangle = sampleTextPane.modelToView(cursorPosition);
+            Rectangle endRectangle = sampleTextPane.modelToView(endPosition);
+
+            if (cursorRectangle.getY() + cursorRectangle.getHeight() < endRectangle.getY()) {
+                cursorRectangle.setBounds(cursorRectangle.x, cursorRectangle.y + cursorRectangle.height * 2,
+                        cursorRectangle.width, cursorRectangle.height);
+            }
+
+            if (cursorRectangle != null) {
+                inputTextPane.scrollRectToVisible(cursorRectangle);
+                sampleTextPane.scrollRectToVisible(cursorRectangle);
+            }
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 }

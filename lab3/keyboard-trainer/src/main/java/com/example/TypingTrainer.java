@@ -4,7 +4,7 @@ import javax.swing.SwingUtilities;
 
 import com.example.controller.TypingController;
 import com.example.model.*;
-import com.example.view.TypingView;
+import com.example.view.MainView;
 
 public class TypingTrainer {
     public static void main(String[] args) {
@@ -13,7 +13,7 @@ public class TypingTrainer {
         TypingModel model = new TypingModel(sampleText);
         Statistics statistics = new Statistics(model);
         TypingController controller = new TypingController();
-        TypingView view = new TypingView(model, controller);
+        MainView view = new MainView(model, controller);
 
         view.setStatistics(statistics);
         controller.setModel(model);

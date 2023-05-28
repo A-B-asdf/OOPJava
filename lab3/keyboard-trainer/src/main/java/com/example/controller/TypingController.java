@@ -5,7 +5,7 @@ import com.example.view.*;
 
 public class TypingController {
     private TypingModel model;
-    private TypingView view;
+    private MainView view;
     private Statistics statistics;
 
     public TypingController() {
@@ -24,7 +24,7 @@ public class TypingController {
         this.statistics = statistics;
     }
 
-    public void setView(TypingView view) {
+    public void setView(MainView view) {
         this.view = view;
     }
 
