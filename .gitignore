@@ -1,0 +1,6 @@
+/*
+!/lab*/
+!.gitignore
+lab2/asdf
+*.log*
+**/target
