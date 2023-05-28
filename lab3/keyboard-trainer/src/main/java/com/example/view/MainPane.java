@@ -36,9 +36,9 @@ public class MainPane extends JPanel {
         JPanel typingPane = new JPanel(); // Обертка для sampleTextPane и inputTextPane
         typingPane.setLayout(new GridLayout(1, 2));
 
-        sampleTextPane = new SampleTextPane(model.getSampleText());
+        sampleTextPane = new SampleTextPane(model);
 
-        inputTextPane = new InputTextPane();
+        inputTextPane = new InputTextPane(model);
 
         typingPane.add(sampleTextPane.getScrollPane());
         typingPane.add(inputTextPane.getScrollPane());
@@ -85,9 +85,9 @@ public class MainPane extends JPanel {
         private Style correctStyle;
         private Style incorrectStyle;
 
-        public SampleTextPane(String text) {
+        public SampleTextPane(TypingModel model) {
             super();
-            setText(text);
+            setText(model.getSampleText());
             setEditable(false);
             setBackground(Color.LIGHT_GRAY);
 
@@ -118,7 +118,7 @@ public class MainPane extends JPanel {
             String sampleText = model.getSampleText();
             int cursorPosition = model.getCursorPosition();
             for (int i = (cursorPosition != 0 ? cursorPosition - 1 : 0); i < sampleText.length(); i++) {
-                if (i < userInput.length()) {
+                if (i < model.getCursorPosition()) {
                     if (userInput.charAt(i) == sampleText.charAt(i)) {
                         sampleTextPane.setCorrectStyle(i);
                     } else {
@@ -132,9 +132,21 @@ public class MainPane extends JPanel {
     }
 
     public class InputTextPane extends TextPane {
+        private StyledDocument doc;
+        private Style defaultStyle;
+        private Style hiddenStyle;
 
-        public InputTextPane() {
+        public InputTextPane(TypingModel model) {
+            super();
+            setText(model.getUserText());
             scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+            doc = getStyledDocument();
+            defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+            hiddenStyle = doc.addStyle("CORRECT_STYLE", defaultStyle);
+            StyleConstants.setForeground(hiddenStyle, Color.WHITE);
+
+            setHiddenStyle(0, model.getUserText().length());
 
             addKeyListener(new KeyAdapter() {
                 @Override
@@ -143,13 +155,28 @@ public class MainPane extends JPanel {
                 }
             });
         }
+
+        public void setDefaultStyle(int position, int length) {
+            doc.setCharacterAttributes(position, length, defaultStyle, true);
+        }
+
+        public void setHiddenStyle(int position, int length) {
+            doc.setCharacterAttributes(position, length, hiddenStyle, true);
+        }
+
+        public void update(TypingModel model) {
+            inputTextPane.setText(model.getUserText());
+            inputTextPane.requestFocus();
+            setDefaultStyle(0, model.getCursorPosition());
+            setHiddenStyle(model.getCursorPosition(), model.getTextLength() -
+                    model.getCursorPosition());
+        }
     }
 
     public void update(TypingModel model) {
         sampleTextPane.update(model);
+        inputTextPane.update(model);
         int cursorPosition = model.getCursorPosition();
-        inputTextPane.setText(model.getUserText());
-        inputTextPane.requestFocus();
 
         // Scroll to cursor position
         try {

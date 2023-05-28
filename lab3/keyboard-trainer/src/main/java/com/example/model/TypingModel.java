@@ -4,10 +4,12 @@ public class TypingModel {
     private String sampleText;
     private String userText;
     private int cursorPosition;
+    int textLength = 0;
 
     public TypingModel(String sampleText) {
         this.sampleText = sampleText;
-        this.userText = "";
+        this.userText = sampleText;
+        textLength = this.sampleText.length();
     }
 
     public String getSampleText() {
@@ -19,18 +21,30 @@ public class TypingModel {
     }
 
     public void addUserText(char c) {
-        userText += c;
-        cursorPosition++;
+        if (cursorPosition < sampleText.length()) {
+            StringBuilder sb = new StringBuilder(userText);
+            sb.setCharAt(cursorPosition, c);
+            userText = sb.toString();
+            cursorPosition++;
+        }
     }
 
     public void removeUserText() {
-        if (!userText.isEmpty()) {
-            userText = userText.substring(0, userText.length() - 1);
+        if (cursorPosition > 0) {
+            if (cursorPosition < textLength) {
+                StringBuilder sb = new StringBuilder(userText);
+                sb.setCharAt(cursorPosition, sampleText.charAt(cursorPosition));
+                userText = sb.toString();
+            }
             cursorPosition--;
         }
     }
 
     public int getCursorPosition() {
         return cursorPosition;
+    }
+
+    public int getTextLength() {
+        return textLength;
     }
 }

@@ -8,7 +8,7 @@ import com.example.view.TypingView;
 
 public class TypingTrainer {
     public static void main(String[] args) {
-        String sampleText = "Пример текста для клавиатурного тренажера. Пример текста для клавиатурного тренажера. Пример текста для клавиатурного тренажера. ";
+        String sampleText = "Пример текста для клавиатурного тренажера.";
 
         TypingModel model = new TypingModel(sampleText);
         Statistics statistics = new Statistics(model);

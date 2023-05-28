@@ -95,7 +95,7 @@ public class TypingView extends JFrame {
             logoLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
             // Изменяем цвет шрифта
-            logoLabel.setForeground(Color.BLUE);
+            logoLabel.setForeground(Color.ORANGE);
 
             // Добавляем отступы
             logoLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
